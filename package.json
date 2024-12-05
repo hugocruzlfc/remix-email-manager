@@ -9,7 +9,8 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "postinstall": "prisma generate && prisma migrate deploy"
+    "postinstall": "prisma generate && prisma migrate deploy",
+    "prepare": "husky"
   },
   "dependencies": {
     "@prisma/client": "^6.0.1",
@@ -26,6 +27,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^19.6.0",
     "@remix-run/dev": "^2.15.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
@@ -39,6 +41,7 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.1.7",
     "postcss": "^8.4.38",
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
@@ -48,6 +51,12 @@
     "typescript": "^5.1.6",
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "engines": {
     "node": ">=20.0.0"
