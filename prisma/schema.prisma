@@ -6,6 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Tags {
+  Important
+  Work
+  Personal
+  Meeting
+  Spam
+}
+
+model Email {
+  id        Int      @id @default(autoincrement())
+  body      String   @unique
+  tag       Tags
+  read      Boolean  @default(false)
+  from      String
+  to        String
+  subject   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
