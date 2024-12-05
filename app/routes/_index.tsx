@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,10 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { TypographyH3 } from "@/components/ui/typography";
+import { prisma } from "@/lib/prisma-client";
+import { addEmailFormSchema } from "@/lib/schema-validation";
 import { Tags } from "@prisma/client";
-import type { MetaFunction } from "@remix-run/node";
-import { Form, Link } from "@remix-run/react";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { Form, redirect } from "@remix-run/react";
+import { CirclePlus, Send } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -22,48 +26,88 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function action({ request }: LoaderFunctionArgs) {
+  const formData = await request.formData();
+  const values = Object.fromEntries(formData);
+
+  const { success, data } = addEmailFormSchema.safeParse(values);
+
+  if (!success) {
+    throw new Response("Not allowed", {
+      status: 400,
+    });
+  }
+
+  await prisma.email.create({
+    data,
+  });
+
+  return redirect("/");
+}
+
 export default function Index() {
   return (
     <Card>
-      <CardHeader></CardHeader>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <CirclePlus />
+          <TypographyH3 title="Create a new email" />
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <div className="space-y-5">
-          <TypographyH3 title="Create a new pet" />
           <Form
             method="POST"
             className="grid gap-4"
             encType="multipart/form-data"
           >
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input name="name" id="name" required />
+            <div className="flex flex-row items-center justify-between gap-5">
+              <div className="w-full space-y-2">
+                <Label htmlFor="from">From</Label>
+                <Input name="from" id="from" required />
+              </div>
+              <div className="w-full space-y-2">
+                <Label htmlFor="to">To</Label>
+                <Input name="to" id="to" required />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select name="type" required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Pet Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {Object.keys(Tags).map((petType) => (
-                      <SelectItem key={petType} value={petType}>
-                        {petType}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="birthday">Birthday</Label>
-              <Input name="birthday" id="birthday" type="date" required />
-            </div>
+            <div className="flex flex-row items-center justify-between gap-5">
+              <div className="w-full space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input name="subject" id="subject" required />
+              </div>
 
-            <div className="flex items-center justify-between">
-              <Button type="submit">Add pet</Button>
-              <Button asChild variant="link">
-                <Link to="/">Cancel</Link>
+              <div className="w-full space-y-2">
+                <Label htmlFor="tag">Tag</Label>
+                <Select name="tag" defaultValue={Tags.Important}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.keys(Tags).map((tag) => (
+                        <SelectItem key={tag} value={tag}>
+                          {tag}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Type your message here."
+                className="resize-none"
+                name="body"
+                rows={15}
+                required
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit">
+                <Send />
+                Send
               </Button>
             </div>
           </Form>
