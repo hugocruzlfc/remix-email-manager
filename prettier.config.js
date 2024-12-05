@@ -1,4 +1,5 @@
-module.exports = {
-  plugins: ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"],
-  tailwindFunctions: ["clsx"],
-};
+export const plugins = [
+  "prettier-plugin-organize-imports",
+  "prettier-plugin-tailwindcss",
+];
+export const tailwindFunctions = ["clsx"];
