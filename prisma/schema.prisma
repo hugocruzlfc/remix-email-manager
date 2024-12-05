@@ -19,7 +19,7 @@ enum Tags {
 }
 
 model Email {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   body      String   @unique
   tag       Tags
   read      Boolean  @default(false)
