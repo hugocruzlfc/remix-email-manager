@@ -16,7 +16,7 @@ export default function Navbar() {
     <header role="banner" className="text-light sticky bg-secondary">
       <nav
         role="navigation"
-        className="mx-auto flex max-w-7xl justify-between p-4"
+        className="mx-auto flex max-w-7xl items-center justify-between p-4"
       >
         <NavLink to="/">
           <span className="flex flex-wrap items-center gap-2 text-2xl">

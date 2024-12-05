@@ -50,8 +50,8 @@ export default function Index() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CirclePlus />
           <TypographyH3 title="Create a new email" />
+          <CirclePlus />
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -95,7 +95,7 @@ export default function Index() {
                 </Select>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="mt-5">
               <Textarea
                 placeholder="Type your message here."
                 className="resize-none"
