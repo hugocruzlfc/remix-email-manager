@@ -20,7 +20,7 @@ enum Tags {
 
 model Email {
   id        String   @id @default(cuid())
-  body      String   @unique
+  body      String
   tag       Tags
   read      Boolean  @default(false)
   from      String

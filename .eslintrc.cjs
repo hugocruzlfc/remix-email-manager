@@ -50,6 +50,7 @@ module.exports = {
       },
       rules: {
         "react/prop-types": "off",
+        "jsx-a11y/anchor-has-content": "off",
       },
     },
 
