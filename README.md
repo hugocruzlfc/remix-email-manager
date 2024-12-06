@@ -1,6 +1,18 @@
-# Welcome to Remix!
+# Welcome to Project!
 
-- 📖 [Remix docs](https://remix.run/docs)
+## Getting Started
+
+Clone the repo and up the docker compose:
+
+```shellscript
+docker compose up -d
+```
+
+Install dependencies:
+
+```shellscript
+npm install
+```
 
 ## Development
 
@@ -39,4 +51,6 @@ Make sure to deploy the output of `npm run build`
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
 
-docker compose up -d
+## And keep studying!
+
+- 📖 [Remix docs](https://remix.run/docs)
