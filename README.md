@@ -5,7 +5,7 @@
 Clone the repo and create .env file with the following content:
 
 ```shellscript
- touch .env && echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/emailmanager_db?schema=public" > .env
+ touch .env && echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/emailmanager_db?schema=public" > .env
 ```
 
 Start the database:
