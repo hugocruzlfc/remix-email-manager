@@ -7,6 +7,7 @@ import { getAdminFiltersFromQuery } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 
 import Pagination from "@/components/Pagination";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
   useLoaderData,
@@ -130,16 +131,27 @@ export default function AdminDashboardPage() {
           navigationState={state}
           inputRef={inputRef}
           fromRef={formRef}
+          buttonSubmitStatus={emails.length === 0}
         />
       )}
       <div className="my-4" aria-live="polite">
         <p>{`Displaying ${emails.length} of ${count}.`}</p>
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {emails.map((email) => (
-          <EmailTile key={email.id} email={email} />
-        ))}
-      </div>
+
+      {emails.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {emails.map((email) => (
+            <EmailTile key={email.id} email={email} />
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Not emails found!</CardTitle>
+          </CardHeader>
+        </Card>
+      )}
+
       {totalPages > 1 && (
         <Pagination totalPages={totalPages} pageParam="page" />
       )}

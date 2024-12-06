@@ -16,12 +16,14 @@ type FiltersFormProps = {
   navigationState: string;
   fromRef: React.RefObject<HTMLFormElement>;
   inputRef: React.RefObject<HTMLInputElement>;
+  buttonSubmitStatus: boolean;
 };
 
 export default function FiltersForm({
   navigationState,
   inputRef,
   fromRef,
+  buttonSubmitStatus,
 }: FiltersFormProps) {
   return (
     <Form ref={fromRef} className="flex flex-wrap items-end gap-x-4 space-y-5">
@@ -83,7 +85,7 @@ export default function FiltersForm({
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full" disabled={buttonSubmitStatus}>
         <Search />
         {navigationState === "submitting" ? "Searching..." : "Search"}
       </Button>

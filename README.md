@@ -28,21 +28,17 @@ Run the dev server:
 npm run dev
 ```
 
-## Deployment
+## Understanding the project
 
-First, build your app for production:
+This project is a simple email manager. It has a list of emails and you can add simulating a user and delete if you are an admin.
 
-```sh
-npm run build
-```
+The project has 3 main routes.
 
-Then run the app in production mode:
+“/” the landing page to create the emails, simulating that it is a random user who enters the app.
 
-```sh
-npm start
-```
+“/admin-dashboard” for the core of the app where the administrator reviews the available emails. He has the possibility to filter them, paginate them and see their details.
 
-Now you'll need to pick a host to deploy it to.
+“/email-details” where the administrator can read the emails.
 
 ### DIY
 
