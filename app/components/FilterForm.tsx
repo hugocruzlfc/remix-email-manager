@@ -13,14 +13,12 @@ import { Form } from "@remix-run/react";
 import { Search } from "lucide-react";
 
 type FiltersFormProps = {
-  searchParams: URLSearchParams;
   navigationState: string;
   fromRef: React.RefObject<HTMLFormElement>;
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
 export default function FiltersForm({
-  searchParams,
   navigationState,
   inputRef,
   fromRef,
@@ -33,12 +31,11 @@ export default function FiltersForm({
           name="search"
           id="search"
           placeholder="Search by email From or To"
-          defaultValue={searchParams.get("search") || ""}
         />
       </div>
 
       <div className="flex w-full flex-col gap-8 md:flex-row">
-        <Select name="tag" defaultValue={searchParams.get("tag") || ""}>
+        <Select name="tag">
           <SelectTrigger>
             <SelectValue placeholder="Select tag" />
           </SelectTrigger>
@@ -52,7 +49,7 @@ export default function FiltersForm({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select name="status" defaultValue={searchParams.get("status") || ""}>
+        <Select name="status">
           <SelectTrigger>
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
@@ -63,7 +60,7 @@ export default function FiltersForm({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select name="orderBy" defaultValue={searchParams.get("orderBy") || ""}>
+        <Select name="orderBy">
           <SelectTrigger>
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
@@ -74,10 +71,7 @@ export default function FiltersForm({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select
-          name="orderDir"
-          defaultValue={searchParams.get("orderDir") || ""}
-        >
+        <Select name="orderDir">
           <SelectTrigger>
             <SelectValue placeholder="Select a direction" />
           </SelectTrigger>

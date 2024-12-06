@@ -1,14 +1,14 @@
-import CurrentPagination from "@/components/CurrentPagination";
 import { EmailTile } from "@/components/EmailTile";
 import FiltersForm from "@/components/FilterForm";
 import { Button } from "@/components/ui/button";
 import { TypographyH3, TypographyH4 } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma-client";
-import { Prisma, Tags } from "@prisma/client";
+import { getAdminFiltersFromQuery } from "@/lib/utils";
+import { Prisma } from "@prisma/client";
 
+import Pagination from "@/components/Pagination";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
-  Form,
   useLoaderData,
   useNavigation,
   useSearchParams,
@@ -19,7 +19,7 @@ import {
   SlidersHorizontal,
   Trash2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -34,25 +34,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const query = url.searchParams;
 
-  const searchQuery = query.get("search");
-  const currentTag = query.get("tag");
-  const currentStatus = query.get("status");
+  const filters = getAdminFiltersFromQuery(query);
 
-  const currentPage = Math.max(Number(query.get("page") || 1), 1);
-
-  const formattedFilter: Prisma.EmailWhereInput = searchQuery
+  const formattedFilter: Prisma.EmailWhereInput = filters.search
     ? {
         OR: [
-          {
-            from: {
-              contains: searchQuery,
-            },
-          },
-          {
-            to: {
-              contains: searchQuery,
-            },
-          },
+          { from: { contains: filters.search } },
+          { to: { contains: filters.search } },
         ],
       }
     : {};
@@ -60,34 +48,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const where: Prisma.EmailWhereInput = {
     AND: [
       formattedFilter,
-      currentTag ? { tag: currentTag as Tags } : undefined,
-      currentStatus
-        ? {
-            read: currentStatus === "true",
-          }
-        : undefined,
+      filters.tag ? { tag: filters.tag } : undefined,
+      filters.status !== undefined ? { read: filters.status } : undefined,
     ].filter(Boolean) as Prisma.EmailWhereInput[],
   };
 
   const options: Prisma.EmailFindManyArgs = {
     take: PER_PAGE,
-    skip: (currentPage - 1) * PER_PAGE,
-    orderBy: {
-      updatedAt: "desc",
-    },
+    skip: (filters?.page - 1) * PER_PAGE,
+    orderBy: filters.orderBy
+      ? { [filters.orderBy]: filters.orderDir }
+      : !filters.status
+        ? { read: "asc" }
+        : { updatedAt: "desc" },
     where,
   };
 
   const countOptions: Prisma.EmailCountArgs = {};
 
   countOptions.where = options.where;
-
-  if (query.get("orderBy")) {
-    const orderBy = query.get("orderBy");
-    options.orderBy = {
-      [orderBy || "updatedAt"]: query.get("orderDir") || "asc",
-    };
-  }
 
   const [emails, count] = await Promise.all([
     prisma.email.findMany(options),
@@ -103,22 +82,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function AdminDashboardPage() {
   const { state } = useNavigation();
   const { emails, count } = useLoaderData<typeof loader>();
-  const [searchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const totalPages = Math.ceil(count / PER_PAGE);
   const [showFilters, setShowFilters] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (state === "submitting") {
-      const isClearForm = formRef.current?.id === "clear-filters-form";
-      if (isClearForm) {
-        formRef.current?.reset();
-        inputRef.current?.focus();
-      }
-    }
-  }, [state]);
+  const clearFilters = () => {
+    setSearchParams({});
+    formRef.current?.reset();
+    inputRef.current?.focus();
+  };
 
   return (
     <div className="space-y-5">
@@ -138,15 +113,8 @@ export default function AdminDashboardPage() {
         </div>
         {showFilters && (
           <>
-            <Form id="clear-filters-form" method="get">
-              <input type="hidden" name="search" value="" />
-              <input type="hidden" name="tag" value="" />
-              <input type="hidden" name="status" value="" />
-              <input type="hidden" name="orderBy" value="" />
-              <input type="hidden" name="orderDir" value="" />
-            </Form>
-
             <Button
+              onClick={clearFilters}
               variant="destructive"
               type="submit"
               form="clear-filters-form"
@@ -159,7 +127,6 @@ export default function AdminDashboardPage() {
       </div>
       {showFilters && (
         <FiltersForm
-          searchParams={searchParams}
           navigationState={state}
           inputRef={inputRef}
           fromRef={formRef}
@@ -174,7 +141,7 @@ export default function AdminDashboardPage() {
         ))}
       </div>
       {totalPages > 1 && (
-        <CurrentPagination totalPages={totalPages} pageParam="page" />
+        <Pagination totalPages={totalPages} pageParam="page" />
       )}
     </div>
   );
