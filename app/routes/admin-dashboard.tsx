@@ -1,5 +1,6 @@
 import { EmailTile } from "@/components/EmailTile";
 import { TypographyH3 } from "@/components/ui/typography";
+import { prisma } from "@/lib/prisma-client";
 import type { MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 

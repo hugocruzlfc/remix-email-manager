@@ -16,8 +16,9 @@ import { prisma } from "@/lib/prisma-client";
 import { addEmailFormSchema } from "@/lib/schema-validation";
 import { Tags } from "@prisma/client";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Form, redirect } from "@remix-run/react";
+import { Form, redirect, useNavigation } from "@remix-run/react";
 import { CirclePlus, Send } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -46,6 +47,17 @@ export async function action({ request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
+  const { state } = useNavigation();
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (state === "submitting") {
+      formRef.current?.reset();
+      inputRef.current?.focus();
+    }
+  }, [state]);
+
   return (
     <Card>
       <CardHeader>
@@ -57,6 +69,7 @@ export default function Index() {
       <CardContent>
         <div className="space-y-5">
           <Form
+            ref={formRef}
             method="POST"
             className="grid gap-4"
             encType="multipart/form-data"
@@ -64,7 +77,7 @@ export default function Index() {
             <div className="flex flex-row items-center justify-between gap-5">
               <div className="w-full space-y-2">
                 <Label htmlFor="from">From</Label>
-                <Input name="from" id="from" required />
+                <Input name="from" id="from" required ref={inputRef} />
               </div>
               <div className="w-full space-y-2">
                 <Label htmlFor="to">To</Label>
@@ -107,7 +120,7 @@ export default function Index() {
             <div className="flex justify-end">
               <Button type="submit">
                 <Send />
-                Send
+                {state === "submitting" ? "Sending..." : "Send"}
               </Button>
             </div>
           </Form>
