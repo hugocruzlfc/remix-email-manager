@@ -9,8 +9,14 @@ import {
 import { TypographyH3 } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma-client";
 import { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import { ArrowBigLeft, CalendarRange } from "lucide-react";
+import {
+  Form,
+  Link,
+  redirect,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
+import { ArrowBigLeft, CalendarRange, Trash2 } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -42,8 +48,28 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { email: currentEmail };
 }
 
+export async function action({ request }: LoaderFunctionArgs) {
+  const formData = await request.formData();
+  const values = Object.fromEntries(formData);
+
+  if (request.method === "DELETE") {
+    await prisma.email.delete({
+      where: {
+        id: values.id as string,
+      },
+    });
+  } else {
+    throw new Response("Not allowed", {
+      status: 400,
+    });
+  }
+
+  return redirect("/admin-dashboard");
+}
+
 export default function EmailDetailsPage() {
   const { email } = useLoaderData<typeof loader>();
+  const { state } = useNavigation();
 
   return (
     <div className="space-y-5">
@@ -72,11 +98,26 @@ export default function EmailDetailsPage() {
 
           <Badge>{email?.tag}</Badge>
         </CardHeader>
-        <CardContent className="space-y-2">
-          <div>Subject: {email?.subject}</div>
-          <Card>
-            <div className="p-6">{email?.body}</div>
-          </Card>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <p>Subject: {email?.subject}</p>
+            <Card>
+              <div className="p-6">{email?.body}</div>
+            </Card>
+          </div>
+          <div className="flex justify-end">
+            <Form method="delete">
+              <input type="hidden" name="id" value={email?.id} />
+              <Button
+                type="submit"
+                disabled={state === "submitting"}
+                variant="destructive"
+              >
+                <Trash2 />
+                {state === "submitting" ? "Deleting..." : "Delete"}
+              </Button>
+            </Form>
+          </div>
         </CardContent>
       </Card>
     </div>

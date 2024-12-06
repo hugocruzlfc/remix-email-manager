@@ -17,8 +17,8 @@ import {
 import {
   ChevronDown,
   ChevronUp,
+  SearchX,
   SlidersHorizontal,
-  Trash2,
 } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -116,11 +116,11 @@ export default function AdminDashboardPage() {
           <>
             <Button
               onClick={clearFilters}
-              variant="destructive"
+              variant="outline"
               type="submit"
               form="clear-filters-form"
             >
-              <Trash2 />
+              <SearchX />
               <p className="hidden md:block"> Clear Filters</p>
             </Button>
           </>
