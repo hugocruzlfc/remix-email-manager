@@ -4,7 +4,7 @@
 
 Clone the repo and create .env file with the following content:
 
-````shellscript
+```shellscript
  touch .env && echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/emailmanager_db" > .env
 ```
 
@@ -12,7 +12,7 @@ Start the database:
 
 ```shellscript
 docker compose up -d
-````
+```
 
 Install dependencies:
 
