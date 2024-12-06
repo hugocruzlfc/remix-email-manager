@@ -1,7 +1,16 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
 import { TypographyH3 } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma-client";
 import { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
+import { ArrowBigLeft, CalendarRange } from "lucide-react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,6 +26,19 @@ export async function loader({ params }: LoaderFunctionArgs) {
     },
   });
 
+  await prisma.email.update({
+    where: {
+      id: Number(params.id),
+    },
+    data: {
+      read: true,
+    },
+  });
+
+  if (!currentEmail) {
+    return { status: 404 };
+  }
+
   return { email: currentEmail };
 }
 
@@ -25,21 +47,35 @@ export default function EmailDetailsPage() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <TypographyH3 title={`Details of email from ${email?.from}`} />
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="icon">
+            <Link to="/admin-dashboard">
+              <ArrowBigLeft />
+            </Link>
+          </Button>
+          <TypographyH3 title={`Details of email from ${email?.from}`} />
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CalendarRange />
+          {email?.createdAt.toLocaleDateString()}
+        </div>
       </div>
-      {/* <Card>
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-2">
-            <CardTitle>{email.subject}</CardTitle>
-            <CardDescription>From: {email.from}</CardDescription>
+            <CardDescription>To: {email?.to}</CardDescription>
           </div>
-          <Badge>{email.tag}</Badge>
+
+          <Badge>{email?.tag}</Badge>
         </CardHeader>
-        <CardContent className="flex flex-row items-center justify-between">
-          <ReadStatus read={email.read} />
+        <CardContent className="space-y-2">
+          <div>Subject: {email?.subject}</div>
+          <Card>
+            <div className="p-6">{email?.body}</div>
+          </Card>
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   );
 }
