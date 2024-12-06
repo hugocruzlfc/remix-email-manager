@@ -13,8 +13,13 @@ import {
   useNavigation,
   useSearchParams,
 } from "@remix-run/react";
-import { SlidersHorizontal, Trash2 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  SlidersHorizontal,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -100,6 +105,7 @@ export default function AdminDashboardPage() {
   const { emails, count } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const totalPages = Math.ceil(count / PER_PAGE);
+  const [showFilters, setShowFilters] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -121,30 +127,48 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-2">
           <SlidersHorizontal />
           <TypographyH4 title="Filters" />
-        </div>
-        <Form id="clear-filters-form" method="get">
-          <input type="hidden" name="search" value="" />
-          <input type="hidden" name="tag" value="" />
-          <input type="hidden" name="status" value="" />
-          <input type="hidden" name="orderBy" value="" />
-          <input type="hidden" name="orderDir" value="" />
-        </Form>
-        <Button variant="destructive" type="submit" form="clear-filters-form">
-          <Trash2 />
-          Clear Filters
-        </Button>
-      </div>
 
-      <FiltersForm
-        searchParams={searchParams}
-        navigationState={state}
-        inputRef={inputRef}
-        fromRef={formRef}
-      />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters ? <ChevronUp /> : <ChevronDown />}
+          </Button>
+        </div>
+        {showFilters && (
+          <>
+            <Form id="clear-filters-form" method="get">
+              <input type="hidden" name="search" value="" />
+              <input type="hidden" name="tag" value="" />
+              <input type="hidden" name="status" value="" />
+              <input type="hidden" name="orderBy" value="" />
+              <input type="hidden" name="orderDir" value="" />
+            </Form>
+
+            <Button
+              variant="destructive"
+              type="submit"
+              form="clear-filters-form"
+            >
+              <Trash2 />
+              <p className="hidden md:block"> Clear Filters</p>
+            </Button>
+          </>
+        )}
+      </div>
+      {showFilters && (
+        <FiltersForm
+          searchParams={searchParams}
+          navigationState={state}
+          inputRef={inputRef}
+          fromRef={formRef}
+        />
+      )}
       <div className="my-4" aria-live="polite">
         <p>{`Displaying ${emails.length} of ${count}.`}</p>
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {emails.map((email) => (
           <EmailTile key={email.id} email={email} />
         ))}

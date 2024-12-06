@@ -22,13 +22,13 @@ export const meta: MetaFunction = () => {
 export async function loader({ params }: LoaderFunctionArgs) {
   const currentEmail = await prisma.email.findUnique({
     where: {
-      id: Number(params.id),
+      id: params.id,
     },
   });
 
   await prisma.email.update({
     where: {
-      id: Number(params.id),
+      id: params.id,
     },
     data: {
       read: true,
@@ -47,14 +47,17 @@ export default function EmailDetailsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-col items-center justify-between md:flex-row">
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="icon">
             <Link to="/admin-dashboard">
               <ArrowBigLeft />
             </Link>
           </Button>
-          <TypographyH3 title={`Details of email from ${email?.from}`} />
+          <TypographyH3
+            title={`Details of email from ${email?.from}`}
+            className="text-xl md:text-2xl"
+          />
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <CalendarRange />

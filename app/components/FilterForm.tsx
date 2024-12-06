@@ -37,7 +37,7 @@ export default function FiltersForm({
         />
       </div>
 
-      <div className="flex w-full gap-8">
+      <div className="flex w-full flex-col gap-8 md:flex-row">
         <Select name="tag" defaultValue={searchParams.get("tag") || ""}>
           <SelectTrigger>
             <SelectValue placeholder="Select tag" />

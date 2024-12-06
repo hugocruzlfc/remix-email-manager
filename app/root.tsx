@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import { Footer } from "./components/Footer";
 import Navbar from "./components/Navbar";
 import "./tailwind.css";
 
@@ -34,9 +35,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Navbar />
-        <main className="mx-auto min-h-[50vh] max-w-7xl space-y-10 px-5 py-10">
+        <main className={`mx-auto min-h-screen max-w-7xl flex-1 px-5 py-10`}>
           {children}
         </main>
+        <Footer />
         <ScrollRestoration />
         <Scripts />
       </body>

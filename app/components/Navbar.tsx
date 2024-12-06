@@ -13,22 +13,23 @@ export default function Navbar() {
     : "Enjoy simple and easy sending of emails";
 
   return (
-    <header role="banner" className="text-light sticky bg-secondary">
+    <header role="banner" className="text-light sticky top-0 bg-secondary">
       <nav
         role="navigation"
-        className="mx-auto flex max-w-7xl items-center justify-between p-4"
+        className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 p-4 md:flex-row md:items-center"
       >
         <NavLink to="/">
-          <span className="flex flex-wrap items-center gap-2 text-2xl">
+          <span className="flex flex-wrap items-center gap-2 text-xl md:text-2xl">
             <Mail />
             <p>Email Manager</p>
           </span>
         </NavLink>
-        <div>
-          <div className="space-y-1">
-            <p className="text-xl">Welcome: {userType}</p>
-            <p className="text-sm text-muted-foreground">{userTypeMessage}</p>
-          </div>
+
+        <div className="flex flex-col space-y-1">
+          <p className="text-sm md:text-xl">Welcome: {userType}</p>
+          <p className="text-xs text-muted-foreground md:text-sm">
+            {userTypeMessage}
+          </p>
         </div>
       </nav>
     </header>
